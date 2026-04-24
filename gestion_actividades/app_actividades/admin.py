@@ -1,8 +1,10 @@
 from django.contrib import admin
-from .models import UsuarioInscrito, Monitor, ResponsableSala, Sala, Actividad
+from .models import Actividad, Usuario, Monitor, Sala
 
-admin.site.register(UsuarioInscrito)
+class ActividadAdmin(admin.ModelAdmin):
+    filter_horizontal = ('salas_secundarias',)
+
+admin.site.register(Actividad, ActividadAdmin)
+admin.site.register(Usuario)
 admin.site.register(Monitor)
-admin.site.register(ResponsableSala)
 admin.site.register(Sala)
-admin.site.register(Actividad)
