@@ -1,5 +1,5 @@
 from django import forms
-from .models import Actividad, Usuario, Monitor, Sala, ResponsableSala
+from .models import Actividad, Usuario, Monitor, Sala
 
 class ActividadForm(forms.ModelForm):
     class Meta:
@@ -9,7 +9,7 @@ class ActividadForm(forms.ModelForm):
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = '__all__'
+        fields = ['nombre', 'edad', 'email', 'telefono']  # Sin 'actividades'
 
 class MonitorForm(forms.ModelForm):
     class Meta:
@@ -19,11 +19,6 @@ class MonitorForm(forms.ModelForm):
 class SalaForm(forms.ModelForm):
     class Meta:
         model = Sala
-        fields = '__all__'
-
-class ResponsableSalaForm(forms.ModelForm):
-    class Meta:
-        model = ResponsableSala
         fields = '__all__'
 
 class InscripcionForm(forms.Form):

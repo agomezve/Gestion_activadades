@@ -1,6 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.db.models import F
 from .models import Actividad, Usuario, Monitor, Sala
 from .forms import ActividadForm, UsuarioForm, MonitorForm, SalaForm, InscripcionForm
+
+# ─────────────────────────── HOME DASHBOARD ────────────────────────────
+
+def home(request):
+    total_actividades = Actividad.objects.count()
+    total_usuarios = Usuario.objects.count()
+    total_monitores = Monitor.objects.count()
+    total_salas = Sala.objects.count()
+    actividades_recientes = Actividad.objects.select_related('monitor').order_by('-id')[:5]
+    return render(request, 'app_actividades/home.html', {
+        'total_actividades': total_actividades,
+        'total_usuarios': total_usuarios,
+        'total_monitores': total_monitores,
+        'total_salas': total_salas,
+        'actividades_recientes': actividades_recientes,
+    })
 
 # ─────────────────────────── ACTIVIDADES ────────────────────────────
 
@@ -191,7 +209,25 @@ def inscribir_usuario(request, id):
         form = InscripcionForm(request.POST)
         if form.is_valid():
             usuario = form.cleaned_data['usuario']
+
+            # Comprobar que ya no está inscrito
+            if actividad.usuarios_inscritos.filter(pk=usuario.pk).exists():
+                messages.error(request, f'{usuario.nombre} ya está inscrito en esta actividad.')
+                return redirect('inscripciones_actividad', id=id)
+
+            # Comprobar plazas (releer desde BD para tener el valor actualizado)
+            actividad.refresh_from_db()
+            if actividad.plazas_disponibles <= 0:
+                messages.error(request, 'No quedan plazas disponibles en esta actividad.')
+                return redirect('inscripciones_actividad', id=id)
+
+            # Inscribir usuario
             actividad.usuarios_inscritos.add(usuario)
+
+            # Restar plaza en la actividad de forma atómica
+            Actividad.objects.filter(pk=id).update(plazas_disponibles=F('plazas_disponibles') - 1)
+
+            messages.success(request, f'{usuario.nombre} inscrito correctamente.')
             return redirect('inscripciones_actividad', id=id)
     else:
         form = InscripcionForm()
@@ -206,6 +242,11 @@ def cancelar_inscripcion(request, actividad_id, usuario_id):
     usuario = get_object_or_404(Usuario, pk=usuario_id)
     if request.method == 'POST':
         actividad.usuarios_inscritos.remove(usuario)
+
+        # Restaurar plaza en la actividad de forma atómica
+        Actividad.objects.filter(pk=actividad_id).update(plazas_disponibles=F('plazas_disponibles') + 1)
+
+        messages.success(request, f'Inscripción de {usuario.nombre} cancelada.')
         return redirect('inscripciones_actividad', id=actividad_id)
     return render(request, 'app_actividades/confirmar_eliminar.html', {
         'objeto': usuario,

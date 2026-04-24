@@ -105,6 +105,10 @@
 
         .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; }
 
+        /* ── MESSAGES ── */
+        .msg-success { padding: 12px 18px; background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.3); color: var(--success); border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 14px; }
+        .msg-error   { padding: 12px 18px; background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); color: var(--danger);  border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 14px; }
+
         /* ── MAIN ── */
         .main {
             margin-left: 240px;
@@ -267,9 +271,15 @@
 
 <nav class="sidebar">
     <div class="sidebar-brand">
-        <div class="logo">🎭</div>
-        <span>Centro<br>Cultural</span>
+        <a href="{% url 'home' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+            <div class="logo">🎭</div>
+            <span>Centro<br>Cultural</span>
+        </a>
     </div>
+
+    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <span class="icon">🏠</span> Inicio
+    </a>
 
     <div class="sidebar-section">General</div>
     <a href="{% url 'lista_actividades' %}" class="{% if request.resolver_match.url_name == 'lista_actividades' or request.resolver_match.url_name == 'detalle_actividad' %}active{% endif %}">
@@ -289,6 +299,11 @@
 </nav>
 
 <main class="main">
+    {% if messages %}
+        {% for msg in messages %}
+        <div class="{% if msg.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
     {% block content %}{% endblock %}
 </main>
 
