@@ -31,7 +31,7 @@ def lista_actividades(request):
     if monitor:
         actividades = actividades.filter(monitor__id=monitor)
     monitores = Monitor.objects.all()
-    return render(request, 'app_actividades/lista_actividades.html', {
+    return render(request, 'app_actividades/actividades/lista_actividades.html', {
         'actividades': actividades,
         'monitores': monitores,
         'filtro_tipo': tipo,
@@ -50,7 +50,7 @@ def nueva_actividad(request):
 
 def detalle_actividad(request, id):
     actividad = get_object_or_404(Actividad, pk=id)
-    return render(request, 'app_actividades/detalle_actividad.html', {'actividad': actividad})
+    return render(request, 'app_actividades/actividades/detalle_actividad.html', {'actividad': actividad})
 
 def editar_actividad(request, id):
     actividad = get_object_or_404(Actividad, pk=id)
@@ -78,7 +78,7 @@ def lista_usuarios(request):
     actividades = Actividad.objects.all()
     if actividad_id:
         usuarios = usuarios.filter(actividades__id=actividad_id)
-    return render(request, 'app_actividades/lista_usuarios.html', {
+    return render(request, 'app_actividades/usuarios/lista_usuarios.html', {
         'usuarios': usuarios,
         'actividades': actividades,
         'filtro_actividad': actividad_id,
@@ -96,7 +96,7 @@ def nuevo_usuario(request):
 
 def detalle_usuario(request, id):
     usuario = get_object_or_404(Usuario, pk=id)
-    return render(request, 'app_actividades/detalle_usuario.html', {'usuario': usuario})
+    return render(request, 'app_actividades/usuarios/detalle_usuario.html', {'usuario': usuario})
 
 def editar_usuario(request, id):
     usuario = get_object_or_404(Usuario, pk=id)
@@ -120,7 +120,7 @@ def eliminar_usuario(request, id):
 
 def lista_monitores(request):
     monitores = Monitor.objects.all()
-    return render(request, 'app_actividades/lista_monitores.html', {'monitores': monitores})
+    return render(request, 'app_actividades/monitores/lista_monitores.html', {'monitores': monitores})
 
 def nuevo_monitor(request):
     if request.method == 'POST':
@@ -135,7 +135,7 @@ def nuevo_monitor(request):
 def detalle_monitor(request, id):
     monitor = get_object_or_404(Monitor, pk=id)
     actividades = monitor.actividades.all()
-    return render(request, 'app_actividades/detalle_monitor.html', {'monitor': monitor, 'actividades': actividades})
+    return render(request, 'app_actividades/monitores/detalle_monitor.html', {'monitor': monitor, 'actividades': actividades})
 
 def editar_monitor(request, id):
     monitor = get_object_or_404(Monitor, pk=id)
@@ -159,7 +159,7 @@ def eliminar_monitor(request, id):
 
 def lista_salas(request):
     salas = Sala.objects.select_related('responsable').all()
-    return render(request, 'app_actividades/lista_salas.html', {'salas': salas})
+    return render(request, 'app_actividades/salas/lista_salas.html', {'salas': salas})
 
 def nueva_sala(request):
     if request.method == 'POST':
@@ -173,7 +173,7 @@ def nueva_sala(request):
 
 def detalle_sala(request, id):
     sala = get_object_or_404(Sala, pk=id)
-    return render(request, 'app_actividades/detalle_sala.html', {'sala': sala})
+    return render(request, 'app_actividades/salas/detalle_sala.html', {'sala': sala})
 
 def editar_sala(request, id):
     sala = get_object_or_404(Sala, pk=id)
@@ -198,7 +198,7 @@ def eliminar_sala(request, id):
 def inscripciones_actividad(request, id):
     actividad = get_object_or_404(Actividad, pk=id)
     usuarios = actividad.usuarios_inscritos.all()
-    return render(request, 'app_actividades/inscripciones_actividad.html', {
+    return render(request, 'app_actividades/inscripciones/inscripciones_actividad.html', {
         'actividad': actividad,
         'usuarios': usuarios,
     })

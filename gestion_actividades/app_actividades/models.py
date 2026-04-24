@@ -14,7 +14,6 @@ class Sala(models.Model):
     nombre = models.CharField(max_length=100)
     capacidad = models.IntegerField()
     ubicacion = models.CharField(max_length=100)
-    # Un monitor puede ser responsable técnico de una sala (1 a 1)
     responsable = models.OneToOneField(
         Monitor,
         on_delete=models.SET_NULL,
