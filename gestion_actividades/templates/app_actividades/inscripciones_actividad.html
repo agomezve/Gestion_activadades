@@ -1,0 +1,40 @@
+{% extends "app_actividades/base.html" %}
+{% block title %}Inscripciones – {{ actividad.nombre }} | Centro Cultural{% endblock %}
+{% block content %}
+<div class="topbar">
+    <div>
+        <h1>👥 Inscripciones</h1>
+        <p class="breadcrumb"><a href="{% url 'lista_actividades' %}" style="color:var(--text-muted);text-decoration:none">Actividades</a> / {{ actividad.nombre }}</p>
+    </div>
+    <a href="{% url 'inscribir_usuario' actividad.id %}" class="btn btn-primary">+ Inscribir usuario</a>
+</div>
+
+<div class="card">
+    {% if usuarios %}
+    <div class="table-wrap">
+    <table>
+        <thead><tr><th>Nombre</th><th>Edad</th><th>Email</th><th>Teléfono</th><th>Cancelar inscripción</th></tr></thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td><a href="{% url 'detalle_usuario' u.id %}" style="color:var(--accent)">{{ u.nombre }}</a></td>
+                <td>{{ u.edad }} años</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.telefono }}</td>
+                <td>
+                    <a href="{% url 'cancelar_inscripcion' actividad.id u.id %}" class="btn btn-danger btn-sm">Cancelar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="empty">
+        <span class="empty-icon">📋</span>
+        <p>No hay usuarios inscritos en esta actividad.</p>
+        <a href="{% url 'inscribir_usuario' actividad.id %}" class="btn btn-primary" style="margin-top:16px">Inscribir primero</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
