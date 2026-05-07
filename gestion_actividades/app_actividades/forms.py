@@ -9,7 +9,7 @@ class ActividadForm(forms.ModelForm):
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['nombre', 'edad', 'email', 'telefono']  # Sin 'actividades'
+        fields = ['nombre', 'edad', 'email', 'telefono']  
 
 class MonitorForm(forms.ModelForm):
     class Meta:
