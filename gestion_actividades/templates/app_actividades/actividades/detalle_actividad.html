@@ -20,7 +20,7 @@
             <p><span class="badge badge-purple">{{ actividad.tipo }}</span></p>
         </div>
         <div class="detail-item"><label>Horario</label>
-            <p>{{ actividad.horario }}</p>
+            <p>{{ actividad.horario_inicio|date:"d/m/Y H:i" }} - {{ actividad.horario_fin|date:"H:i" }}</p>
         </div>
         <div class="detail-item"><label>Duración</label>
             <p>{{ actividad.duracion }} min</p>

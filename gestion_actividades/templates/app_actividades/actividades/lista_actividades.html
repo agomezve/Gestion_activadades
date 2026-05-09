@@ -50,7 +50,7 @@
                     <td><span style="color:var(--text-muted)">{{ a.id }}</span></td>
                     <td><strong>{{ a.nombre }}</strong></td>
                     <td><span class="badge badge-purple">{{ a.tipo }}</span></td>
-                    <td>{{ a.horario }}</td>
+                    <td>{{ a.horario_inicio|date:"d/m/Y H:i" }} - {{ a.horario_fin|date:"H:i" }}</td>
                     <td>{{ a.duracion }} min</td>
                     <td>
                         {% if a.plazas_disponibles > 5 %}

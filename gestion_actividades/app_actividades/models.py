@@ -28,7 +28,8 @@ class Sala(models.Model):
 class Actividad(models.Model):
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=50)
-    horario = models.CharField(max_length=100)
+    horario_inicio = models.DateTimeField(null=True, blank=True)
+    horario_fin = models.DateTimeField(null=True, blank=True, editable=False)
     descripcion = models.TextField()
     duracion = models.IntegerField(help_text="Duración en minutos")
     plazas_disponibles = models.IntegerField()
@@ -39,6 +40,12 @@ class Actividad(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def save(self, *args, **kwargs):
+        if self.horario_inicio and self.duracion:
+            from datetime import timedelta
+            self.horario_fin = self.horario_inicio + timedelta(minutes=self.duracion)
+        super().save(*args, **kwargs)
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
