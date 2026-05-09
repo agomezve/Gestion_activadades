@@ -4,7 +4,6 @@ from django.db.models import F
 from .models import Actividad, Usuario, Monitor, Sala
 from .forms import ActividadForm, UsuarioForm, MonitorForm, SalaForm, InscripcionForm
 
-# ─────────────────────────── HOME DASHBOARD ────────────────────────────
 
 def home(request):
     total_actividades = Actividad.objects.count()
@@ -20,7 +19,7 @@ def home(request):
         'actividades_recientes': actividades_recientes,
     })
 
-# ─────────────────────────── ACTIVIDADES ────────────────────────────
+
 
 def lista_actividades(request):
     tipo = request.GET.get('tipo', '')
@@ -70,7 +69,7 @@ def eliminar_actividad(request, id):
         return redirect('lista_actividades')
     return render(request, 'app_actividades/confirmar_eliminar.html', {'objeto': actividad, 'tipo': 'actividad', 'volver': 'lista_actividades'})
 
-# ─────────────────────────── USUARIOS ────────────────────────────
+
 
 def lista_usuarios(request):
     actividad_id = request.GET.get('actividad', '')
@@ -116,7 +115,7 @@ def eliminar_usuario(request, id):
         return redirect('lista_usuarios')
     return render(request, 'app_actividades/confirmar_eliminar.html', {'objeto': usuario, 'tipo': 'usuario', 'volver': 'lista_usuarios'})
 
-# ─────────────────────────── MONITORES ────────────────────────────
+
 
 def lista_monitores(request):
     monitores = Monitor.objects.all()
@@ -155,7 +154,6 @@ def eliminar_monitor(request, id):
         return redirect('lista_monitores')
     return render(request, 'app_actividades/confirmar_eliminar.html', {'objeto': monitor, 'tipo': 'monitor', 'volver': 'lista_monitores'})
 
-# ─────────────────────────── SALAS ────────────────────────────
 
 def lista_salas(request):
     salas = Sala.objects.select_related('responsable').all()
@@ -193,7 +191,8 @@ def eliminar_sala(request, id):
         return redirect('lista_salas')
     return render(request, 'app_actividades/confirmar_eliminar.html', {'objeto': sala, 'tipo': 'sala', 'volver': 'lista_salas'})
 
-# ─────────────────────────── INSCRIPCIONES ────────────────────────────
+
+
 
 def inscripciones_actividad(request, id):
     actividad = get_object_or_404(Actividad, pk=id)
@@ -209,22 +208,14 @@ def inscribir_usuario(request, id):
         form = InscripcionForm(request.POST)
         if form.is_valid():
             usuario = form.cleaned_data['usuario']
-
-            # Comprobar que ya no está inscrito
             if actividad.usuarios_inscritos.filter(pk=usuario.pk).exists():
                 messages.error(request, f'{usuario.nombre} ya está inscrito en esta actividad.')
                 return redirect('inscripciones_actividad', id=id)
-
-            # Comprobar plazas (releer desde BD para tener el valor actualizado)
             actividad.refresh_from_db()
             if actividad.plazas_disponibles <= 0:
                 messages.error(request, 'No quedan plazas disponibles en esta actividad.')
                 return redirect('inscripciones_actividad', id=id)
-
-            # Inscribir usuario
             actividad.usuarios_inscritos.add(usuario)
-
-            # Restar plaza en la actividad de forma atómica
             Actividad.objects.filter(pk=id).update(plazas_disponibles=F('plazas_disponibles') - 1)
 
             messages.success(request, f'{usuario.nombre} inscrito correctamente.')
@@ -243,7 +234,6 @@ def cancelar_inscripcion(request, actividad_id, usuario_id):
     if request.method == 'POST':
         actividad.usuarios_inscritos.remove(usuario)
 
-        # Restaurar plaza en la actividad de forma atómica
         Actividad.objects.filter(pk=actividad_id).update(plazas_disponibles=F('plazas_disponibles') + 1)
 
         messages.success(request, f'Inscripción de {usuario.nombre} cancelada.')
