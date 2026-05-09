@@ -23,8 +23,6 @@ class ActividadForm(forms.ModelForm):
             return cleaned_data
 
         horario_fin = horario_inicio + timedelta(minutes=duracion)
-
-        # Actividad overlaps if existing_inicio < new_fin AND existing_fin > new_inicio
         overlap_query = Q(horario_inicio__lt=horario_fin, horario_fin__gt=horario_inicio)
         
         if self.instance and self.instance.pk:

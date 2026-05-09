@@ -19,8 +19,7 @@
         <select name="monitor">
             <option value="">Todos</option>
             {% for m in monitores %}
-            <option value="{{ m.id }}" {% if filtro_monitor==m.id|stringformat:"s" %}selected{% endif %}>{{ m.nombre }}
-            </option>
+            <option value="{{ m.id }}" {% if filtro_monitor == m.id|stringformat:"s" %}selected{% endif %}>{{ m.nombre }}</option>
             {% endfor %}
         </select>
     </div>
